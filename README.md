@@ -112,3 +112,8 @@ If you discover any security related issues, please email arcanedev.maroc@gmail.
 [link-travis]:        https://travis-ci.org/ARCANEDEV/LogViewer
 [link-scrutinizer]:   https://scrutinizer-ci.com/g/ARCANEDEV/LogViewer/?branch=master
 [link-insight]:       https://insight.sensiolabs.com/projects/d6b4587a-e00d-4dac-98db-f979731fdc4d
+
+
+## NOTE
+appdev-kpr has modified this pacakage for personal use and claims no right of this package.
+The package was created by the developer mentioned above.
