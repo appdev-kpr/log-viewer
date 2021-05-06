@@ -42,5 +42,6 @@
                 "Arcanedev\\LogViewer\\LogViewerServiceProvider"
             ]
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
