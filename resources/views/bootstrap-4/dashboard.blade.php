@@ -9,26 +9,31 @@
         <div class="col-md-6 col-lg-3">
             <canvas id="stats-doughnut-chart" height="300" class="mb-3"></canvas>
         </div>
-
         <div class="col-md-6 col-lg-9">
             <div class="row">
-                @foreach($percents as $level => $item)
+                @foreach ($percents as $level => $item)
                     <div class="col-sm-6 col-md-12 col-lg-4 mb-3">
-                        <div class="box level-{{ $level }} {{ $item['count'] === 0 ? 'empty' : '' }}">
-                            <div class="box-icon">
-                                {!! log_styler()->icon($level) !!}
-                            </div>
+                        @if ($item['name'] != 'All')
+                        <a href="/log-viewer/logs/{{ \Carbon\Carbon::now()->toDateString() }}/{{ strtolower($item['name']) }}">
+                        @else
+                        <a href="log-viewer/logs/{{ \Carbon\Carbon::now()->toDateString() }}">
+                        @endif
+                            <div class="box level-{{ $level }} {{ $item['count'] === 0 ? 'empty' : '' }}">
+                                <div class="box-icon">
+                                    {!! log_styler()->icon($level) !!}
+                                </div>
 
-                            <div class="box-content">
-                                <span class="box-text">{{ $item['name'] }}</span>
-                                <span class="box-number">
-                                    {{ $item['count'] }} entries - {!! $item['percent'] !!} %
-                                </span>
-                                <div class="progress" style="height: 3px;">
-                                    <div class="progress-bar" style="width: {{ $item['percent'] }}%"></div>
+                                <div class="box-content">
+                                    <span class="box-text">{{ $item['name'] }}</span>
+                                    <span class="box-number">
+                                        {{ $item['count'] }} entries - {!! $item['percent'] !!} %
+                                    </span>
+                                    <div class="progress" style="height: 3px;">
+                                        <div class="progress-bar" style="width: {{ $item['percent'] }}%"></div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 @endforeach
             </div>
@@ -49,5 +54,6 @@
                 }
             });
         });
+
     </script>
 @endsection

@@ -129,4 +129,17 @@ class LogEntryCollection extends Collection
             return 0;
         }, array_flip($levels));
     }
+    /**
+     * Get filtered log entries by mode.
+     *
+     * @param  string  $mode
+     *
+     * @return self
+     */
+    public function filterByMode($mode)
+    {
+        return $this->filter(function(LogEntry $entry) use ($mode) {
+            return $entry->isSameMode($mode);
+        });
+    }
 }

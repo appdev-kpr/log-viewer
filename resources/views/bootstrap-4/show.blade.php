@@ -1,9 +1,9 @@
 <?php
 /**
- * @var  Arcanedev\LogViewer\Entities\Log            $log
- * @var  Illuminate\Pagination\LengthAwarePaginator  $entries
- * @var  string|null                                 $query
- */
+* @var Arcanedev\LogViewer\Entities\Log $log
+* @var Illuminate\Pagination\LengthAwarePaginator $entries
+* @var string|null $query
+*/
 ?>
 
 @extends('log-viewer::bootstrap-4._master')
@@ -19,14 +19,16 @@
             <div class="card mb-4">
                 <div class="card-header"><i class="fa fa-fw fa-flag"></i> Levels</div>
                 <div class="list-group list-group-flush log-menu">
-                    @foreach($log->menu() as $levelKey => $item)
+                    @foreach ($log->menu() as $levelKey => $item)
                         @if ($item['count'] === 0)
-                            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
+                            <a
+                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
                                 <span class="level-name">{!! $item['icon'] !!} {{ $item['name'] }}</span>
                                 <span class="badge empty">{{ $item['count'] }}</span>
                             </a>
                         @else
-                            <a href="{{ $item['url'] }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center level-{{ $levelKey }}{{ $level === $levelKey ? ' active' : ''}}">
+                            <a href="{{ $item['url'] }}"
+                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center level-{{ $levelKey }}{{ $level === $levelKey ? ' active' : '' }}">
                                 <span class="level-name">{!! $item['icon'] !!} {{ $item['name'] }}</span>
                                 <span class="badge badge-level-{{ $levelKey }}">{{ $item['count'] }}</span>
                             </a>
@@ -35,7 +37,31 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-10">
+
+        <div class="col-lg-2">
+            {{-- Log Menu --}}
+            <div class="card mb-4">
+                <div class="card-header"><i class="fa fa-fw fa-flag"></i> Filters</div>
+                <div class="list-group list-group-flush log-menu">
+                    @foreach (log_constants as $levelKey => $item)
+                        @if (!is_null(app('request')->input('mode')))
+                            <a href="?mode={{ $levelKey }}"
+                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center level-{{ $levelKey }} {{ app('request')->input('mode') === $levelKey ? ' active' : '' }}">
+                                <span class="level-name"> {{ $item }}</span>
+                                <span class="badge badge-level-{{ $levelKey }}"></span>
+                            </a>
+                        @else
+                            <a href="?mode={{ $levelKey }}"
+                                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center level-{{ $levelKey }} {{ app('request')->input('mode') === $levelKey ? ' active' : '' }}">
+                                <span class="level-name"> {{ $item }}</span>
+                                <span class="badge badge-level-{{ $levelKey }}"></span>
+                            </a>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
             {{-- Log Details --}}
             <div class="card mb-4">
                 <div class="card-header">
@@ -82,10 +108,12 @@
                     <form action="{{ route('log-viewer::logs.search', [$log->date, $level]) }}" method="GET">
                         <div class=form-group">
                             <div class="input-group">
-                                <input id="query" name="query" class="form-control"  value="{!! $query !!}" placeholder="Type here to search">
+                                <input id="query" name="query" class="form-control" value="{!! $query !!}"
+                                    placeholder="Type here to search">
                                 <div class="input-group-append">
-                                    @unless (is_null($query))
-                                        <a href="{{ route('log-viewer::logs.show', [$log->date]) }}" class="btn btn-secondary">
+                                    @unless(is_null($query))
+                                        <a href="{{ route('log-viewer::logs.show', [$log->date]) }}"
+                                            class="btn btn-secondary">
                                             ({{ $entries->count() }} results) <i class="fa fa-fw fa-times"></i>
                                         </a>
                                     @endunless
@@ -116,13 +144,16 @@
                                 <th>ENV</th>
                                 <th style="width: 120px;">Level</th>
                                 <th style="width: 65px;">Time</th>
+                                <th>Request</th>
                                 <th>Header</th>
                                 <th class="text-right">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($entries as $key => $entry)
-                                <?php /** @var  Arcanedev\LogViewer\Entities\LogEntry  $entry */ ?>
+                                <?php
+                                /** @var Arcanedev\LogViewer\Entities\LogEntry $entry */
+                                ?>
                                 <tr>
                                     <td>
                                         <span class="badge badge-env">{{ $entry->env }}</span>
@@ -138,11 +169,16 @@
                                         </span>
                                     </td>
                                     <td>
+                                        {{ substr($entry->header, 0, strpos($entry->header, ' - Body')) }}
+                                    </td>
+                                    <td>
                                         {{ $entry->header }}
                                     </td>
                                     <td class="text-right">
                                         @if ($entry->hasStack())
-                                            <a class="btn btn-sm btn-light" role="button" data-toggle="collapse" href="#log-stack-{{ $key }}" aria-expanded="false" aria-controls="log-stack-{{ $key }}">
+                                            <a class="btn btn-sm btn-light" role="button" data-toggle="collapse"
+                                                href="#log-stack-{{ $key }}" aria-expanded="false"
+                                                aria-controls="log-stack-{{ $key }}">
                                                 <i class="fa fa-toggle-on"></i> Stack
                                             </a>
                                         @endif
@@ -160,7 +196,8 @@
                             @empty
                                 <tr>
                                     <td colspan="5" class="text-center">
-                                        <span class="badge badge-secondary">{{ trans('log-viewer::general.empty-logs') }}</span>
+                                        <span
+                                            class="badge badge-secondary">{{ trans('log-viewer::general.empty-logs') }}</span>
                                     </td>
                                 </tr>
                             @endforelse
@@ -168,85 +205,86 @@
                     </table>
                 </div>
             </div>
-
-            {!! $entries->appends(compact('query'))->render() !!}
+            {!! $entries->appends(app('request')->input())->render() !!}
         </div>
     </div>
 @endsection
 
 @section('modals')
-    {{-- DELETE MODAL --}}
-    <div id="delete-log-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <form id="delete-log-form" action="{{ route('log-viewer::logs.delete') }}" method="POST">
-                <input type="hidden" name="_method" value="DELETE">
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="date" value="{{ $log->date }}">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">DELETE LOG FILE</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to <span class="badge badge-danger">DELETE</span> this log file <span class="badge badge-primary">{{ $log->date }}</span> ?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-sm btn-secondary mr-auto" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-sm btn-danger" data-loading-text="Loading&hellip;">DELETE FILE</button>
-                    </div>
+{{-- DELETE MODAL --}}
+<div id="delete-log-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <form id="delete-log-form" action="{{ route('log-viewer::logs.delete') }}" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="date" value="{{ $log->date }}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">DELETE LOG FILE</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-            </form>
-        </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to <span class="badge badge-danger">DELETE</span> this log file <span
+                            class="badge badge-primary">{{ $log->date }}</span> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary mr-auto" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-danger" data-loading-text="Loading&hellip;">DELETE
+                        FILE</button>
+                </div>
+            </div>
+        </form>
     </div>
+</div>
 @endsection
 
 @section('scripts')
-    <script>
-        $(function () {
-            var deleteLogModal = $('div#delete-log-modal'),
-                deleteLogForm  = $('form#delete-log-form'),
-                submitBtn      = deleteLogForm.find('button[type=submit]');
+<script>
+    $(function() {
+        var deleteLogModal = $('div#delete-log-modal'),
+            deleteLogForm = $('form#delete-log-form'),
+            submitBtn = deleteLogForm.find('button[type=submit]');
 
-            deleteLogForm.on('submit', function(event) {
-                event.preventDefault();
-                submitBtn.button('loading');
+        deleteLogForm.on('submit', function(event) {
+            event.preventDefault();
+            submitBtn.button('loading');
 
-                $.ajax({
-                    url:      $(this).attr('action'),
-                    type:     $(this).attr('method'),
-                    dataType: 'json',
-                    data:     $(this).serialize(),
-                    success: function(data) {
-                        submitBtn.button('reset');
-                        if (data.result === 'success') {
-                            deleteLogModal.modal('hide');
-                            location.replace("{{ route('log-viewer::logs.list') }}");
-                        }
-                        else {
-                            alert('OOPS ! This is a lack of coffee exception !')
-                        }
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        alert('AJAX ERROR ! Check the console !');
-                        console.error(errorThrown);
-                        submitBtn.button('reset');
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                dataType: 'json',
+                data: $(this).serialize(),
+                success: function(data) {
+                    submitBtn.button('reset');
+                    if (data.result === 'success') {
+                        deleteLogModal.modal('hide');
+                        location.replace("{{ route('log-viewer::logs.list') }}");
+                    } else {
+                        alert('OOPS ! This is a lack of coffee exception !')
                     }
-                });
-
-                return false;
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('AJAX ERROR ! Check the console !');
+                    console.error(errorThrown);
+                    submitBtn.button('reset');
+                }
             });
 
-            @unless (empty(log_styler()->toHighlight()))
-            $('.stack-content').each(function() {
-                var $this = $(this);
-                var html = $this.html().trim()
-                    .replace(/({!! join(log_styler()->toHighlight(), '|') !!})/gm, '<strong>$1</strong>');
-
-                $this.html(html);
-            });
-            @endunless
+            return false;
         });
-    </script>
+
+        @unless(empty(log_styler()->toHighlight()))
+            $('.stack-content').each(function() {
+            var $this = $(this);
+            var html = $this.html().trim()
+            .replace(/({!! join(log_styler()->toHighlight(), '|') !!})/gm, '<strong>$1</strong>');
+
+            $this.html(html);
+            });
+        @endunless
+    });
+
+</script>
 @endsection

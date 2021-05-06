@@ -102,8 +102,11 @@ class LogViewerController extends Controller
         $log     = $this->getLogOrFail($date);
         $query   = $request->get('query');
         $levels  = $this->logViewer->levelsNames();
-        $entries = $log->entries($level)->paginate($this->perPage);
-
+        if ($request->has('mode')) {
+            $entries = $log->mode($request->mode)->paginate($this->perPage);
+        } else {
+            $entries = $log->entries($level)->paginate($this->perPage);
+        }
         return $this->view('show', compact('level', 'log', 'query', 'levels', 'entries'));
     }
 
@@ -124,8 +127,11 @@ class LogViewerController extends Controller
         $log     = $this->getLogOrFail($date);
         $query   = $request->get('query');
         $levels  = $this->logViewer->levelsNames();
-        $entries = $this->logViewer->entries($date, $level)->paginate($this->perPage);
-
+        if ($request->has('mode')) {
+            $entries = $log->mode($request->mode, $level)->paginate($this->perPage);
+        } else {
+            $entries = $this->logViewer->entries($date, $level)->paginate($this->perPage);
+        }
         return $this->view('show', compact('level', 'log', 'query', 'levels', 'entries'));
     }
 

@@ -251,4 +251,38 @@ class Log implements Arrayable, Jsonable, JsonSerializable
 
         return round($bytes / pow(1024, $pow), $precision).' '.$units[$pow];
     }
+    /**
+     * Get log entries.
+     *
+     * @param  string  $mode
+     *
+     * @return \Arcanedev\LogViewer\Entities\LogEntryCollection
+     */
+    public function mode($mode = 'all', $level = 'all')
+    {
+        if ($level!='all') {
+            return $mode === 'all'
+                ? $this->getByLevel($level)
+                : $this->getByMode($mode, $level);
+        } else {
+            return $mode === 'all'
+                ? $this->entries
+                : $this->getByMode($mode);
+        }
+    }
+    /**
+     * Get filtered log entries by mode.
+     *
+     * @param  string  $mode
+     *
+     * @return \Arcanedev\LogViewer\Entities\LogEntryCollection
+     */
+    public function getByMode($mode, $level = 'all')
+    {
+        if ($level!='all') {
+            return $this->entries->filterByLevel($level)->filterByMode($mode);
+        } else {
+            return $this->entries->filterByMode($mode);
+        }
+    }
 }

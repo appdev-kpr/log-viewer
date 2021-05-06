@@ -278,4 +278,37 @@ class LogEntry implements Arrayable, Jsonable, JsonSerializable
     {
         return preg_replace('/^\[('.REGEX_DATETIME_PATTERN.')\].*/', '$1', $header);
     }
+    /**
+     * Check if same log mode.
+     *
+     * @param  string  $mode
+     *
+     * @return bool
+     */
+    public function isSameMode($mode)
+    {
+        $forother = [
+            'user',
+            'course',
+            'drl',
+            'edtech',
+            'network',
+            'webinar',
+            'lessonplan',
+            'training',
+            'lac'
+        ];
+
+        if ($mode == 'other') {
+            foreach ($forother as $omode) {
+                if (!empty(substr($this->header, 0, strpos($this->header, ' - Body'))) && strpos(substr($this->header, 0, strpos($this->header, ' - Body')), $omode) === FALSE) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            $headmode = substr($this->header, 0, strpos($this->header, ' - Body'));
+            return (strpos($headmode, $mode));
+        }
+    }
 }
